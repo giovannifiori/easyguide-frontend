@@ -28,7 +28,9 @@ export default function NearPlaces() {
         setPlaces(response.data);
         setIsLoading(false);
       })
-      .catch(err => {});
+      .catch(err => {
+        setIsLoading(false);
+      });
   };
 
   useEffect(() => {

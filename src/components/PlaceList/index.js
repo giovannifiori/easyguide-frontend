@@ -6,14 +6,17 @@ import { Container } from './styles';
 
 export default function PlaceList(props) {
   let placesContent;
+  const { isLoading, places } = props;
 
-  if (props.isLoading) {
+  if (isLoading) {
     placesContent = <CircularProgress />;
+  } else if (places && places.length === 0) {
+    placesContent = <h2>Nenhum local a ser exibido</h2>
   } else {
-    placesContent = props.places.map(place => (
+    placesContent = places.map(place => (
       <PlaceCard
         name={place.name || ''}
-        address={place.formattedAddress || ''}
+        address={place.formatted_address || ''}
         photoreference={
           place.photos && place.photos[0]
             ? place.photos[0].photo_reference
@@ -25,7 +28,7 @@ export default function PlaceList(props) {
   }
 
   return (
-      <Container isLoading={props.isLoading} >
+      <Container isLoading={isLoading} >
           {placesContent}
       </Container>
   );
