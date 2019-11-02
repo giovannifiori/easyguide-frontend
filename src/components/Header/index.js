@@ -6,7 +6,7 @@ import AppLogo from '../../assets/img/logo.png';
 export default function Header() {
   return (
     <Container>
-      <img src={AppLogo} height='100%' alt="App logo" />
+      <img src={AppLogo} height='100%' alt="Easy Guide" />
     </Container>
   );
 }
