@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
-import { Container, PlacesContainer } from './styles';
-import PlaceCard from '../../components/PlaceCard';
+import { Container } from './styles';
+
+import PlaceList from '../../components/PlaceList';
+
 import InfoDialog from '../../components/InfoDialog';
 
 import api from '../../services/api';
@@ -56,20 +57,7 @@ export default function NearPlaces() {
   }, []);
 
   let pageMessage = 'Buscando locais próximos a você...';
-  let placesContent = <CircularProgress />;
   if (!isLoading) {
-    placesContent = places.map(place => (
-      <PlaceCard
-        name={place.name}
-        address={place.formattedAddress}
-        photoreference={
-          place.photos && place.photos[0]
-            ? place.photos[0].photo_reference
-            : null
-        }
-        positivePercentage={place.positiveOpinionsPercentage}
-      />
-    ));
     pageMessage = 'Estes são os locais pertinhos de você';
   }
 
@@ -87,7 +75,7 @@ export default function NearPlaces() {
   return (
     <Container>
       <h2>{pageMessage}</h2>
-      <PlacesContainer>{placesContent}</PlacesContainer>
+      <PlaceList isLoading={isLoading} places={places} />
       {renderErrorDialog()}
     </Container>
   );
