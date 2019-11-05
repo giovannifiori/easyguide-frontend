@@ -5,26 +5,15 @@ import {
   Image,
   Info,
   PlaceTitle,
-  PlaceSubtitle,
-  Message
+  PlaceSubtitle
 } from './styles';
 import { Card } from '@material-ui/core';
 import { BASE_API_URL } from '../../config/constants';
 import Placeholder from '../../assets/img/placeholder.png';
 
-export default function PlaceCard(props) {
-  let percentageMessage = 'Local ainda não avaliado.';
-  let messageColor = '#212121';
-  if (props.totalReviews) {
-    if (props.positivePercentage < 30) {
-      percentageMessage = `Somente ${props.positivePercentage}% das pessoas consideram esse lugar parcial ou totalmente acessível!`;
-      messageColor = '#CE2F19';
-    } else {
-      percentageMessage = `${props.positivePercentage}% das pessoas consideram esse lugar parcial ou totalmente acessível!`;
-      messageColor = '#4B8F39';
-    }
-  }
+import AccessibilityMessage from '../AccessibilityMessage';
 
+export default function PlaceCard(props) {
   return (
     <Container>
       <Card>
@@ -40,7 +29,7 @@ export default function PlaceCard(props) {
         <Info>
           <PlaceTitle>{props.name}</PlaceTitle>
           <PlaceSubtitle>{props.address}</PlaceSubtitle>
-          <Message color={messageColor}>{percentageMessage}</Message>
+          <AccessibilityMessage totalReviews={props.totalReviews} positivePercentage={props.positivePercentage} />
         </Info>
       </Card>
     </Container>
