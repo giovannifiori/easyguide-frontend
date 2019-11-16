@@ -10,7 +10,7 @@ function PlaceList(props) {
   const { isLoading, places } = props;
 
   function goToPlaceDetails(place) {
-    props.history.push(`/place/${place.id}`, {
+    props.history.push(`/place/${place.place_id}`, {
       place
     });
   }
@@ -20,20 +20,22 @@ function PlaceList(props) {
   } else if (places && places.length === 0) {
     placesContent = <h2>Nenhum local a ser exibido</h2>;
   } else {
-    placesContent = places.map(place => (
-      <PlaceCard
-        name={place.name || ''}
-        address={place.formatted_address || ''}
-        photoreference={
-          place.photos && place.photos[0]
-            ? place.photos[0].photo_reference
-            : null
-        }
-        positivePercentage={place.positiveOpinionsPercentage || ''}
-        key={place.id}
-        onClick={() => goToPlaceDetails(place)}
-      />
-    ));
+    placesContent = places.map(place =>
+      !place ? null : (
+        <PlaceCard
+          name={place.name || ''}
+          address={place.formatted_address || ''}
+          photoreference={
+            place.photos && place.photos[0]
+              ? place.photos[0].photo_reference
+              : null
+          }
+          positivePercentage={place.positiveOpinionsPercentage || ''}
+          key={place.id}
+          onClick={() => goToPlaceDetails(place)}
+        />
+      )
+    );
   }
 
   return <Container isLoading={isLoading}>{placesContent}</Container>;
