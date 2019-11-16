@@ -25,7 +25,7 @@ export default function PlaceCard(props) {
           <PlaceSubtitle>{props.address}</PlaceSubtitle>
           <AccessibilityMessage
             totalReviews={props.totalReviews}
-            positivePercentage={props.positivePercentage}
+            positiveOpinionsPercentage={props.positiveOpinionsPercentage}
           />
         </Info>
       </Card>
