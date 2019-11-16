@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Button, Dialog } from '@material-ui/core';
 
 import {
   Container,
@@ -10,6 +10,7 @@ import {
   CharacteristicsContainer
 } from './styles';
 
+import PlaceReview from '../PlaceReview';
 import Characteristic from '../../components/Characteristic';
 import AccessibilityMessage from '../../components/AccessibilityMessage';
 
@@ -18,10 +19,30 @@ import PlaceHolder from '../../assets/img/logo.png';
 
 export default function PlaceDetails(props) {
   const { place } = props.history.location.state;
+  const [dialogState, setDialogState] = useState({
+    open: false
+  });
+
+  const openReviewDialog = () => setDialogState({ ...dialogState, open: true });
+
+  const closeReviewDialog = () =>
+    setDialogState({ ...dialogState, open: false });
 
   if (!place) {
     return null;
   }
+
+  const renderReviewDialog = () => {
+    return (
+      <Dialog
+        fullWidth
+        open={dialogState.open}
+        onBackdropClick={closeReviewDialog}
+      >
+        <PlaceReview placeId={place.place_id} />
+      </Dialog>
+    );
+  };
 
   const isOpenNow = place.opening_hours && place.opening_hours.open_now;
 
@@ -58,6 +79,7 @@ export default function PlaceDetails(props) {
               style={{ marginTop: 16 }}
               variant="contained"
               color="primary"
+              onClick={openReviewDialog}
             >
               Publicar avaliação
             </Button>
@@ -82,6 +104,8 @@ export default function PlaceDetails(props) {
           title={`Avaliações dos usuários (${place.totalAccessibilityReviews})`}
         />
       </CharacteristicsContainer>
+
+      {renderReviewDialog()}
     </Container>
   );
 }
