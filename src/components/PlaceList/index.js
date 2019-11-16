@@ -30,7 +30,8 @@ function PlaceList(props) {
               ? place.photos[0].photo_reference
               : null
           }
-          positivePercentage={place.positiveOpinionsPercentage || ''}
+          totalReviews={place.totalAccessibilityReviews || 0}
+          positiveOpinionsPercentage={place.positiveOpinionsPercentage || ''}
           key={place.id}
           onClick={() => goToPlaceDetails(place)}
         />

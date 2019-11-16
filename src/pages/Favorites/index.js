@@ -4,7 +4,6 @@ import { withRouter } from 'react-router-dom';
 import { Container } from './styles';
 
 import PlaceList from '../../components/PlaceList';
-
 import InfoDialog from '../../components/InfoDialog';
 
 import api from '../../services/api';
@@ -52,7 +51,7 @@ function Favorites() {
 
   return (
     <Container>
-      <h2>{pageMessage}</h2>
+      <h1>{pageMessage}</h1>
       <PlaceList isLoading={isLoading} places={places} />
       {renderErrorDialog()}
     </Container>
