@@ -18,7 +18,7 @@ function App() {
       <ContentContainer>
         <Switch>
           <Route path="/nearby" exact component={NearPlaces} />
-          <Route path="/place" component={PlaceDetails} />
+          <Route path="/place/:placeId" component={PlaceDetails} />
           <Route path="/search" exact component={Search} />
           <Redirect from="/" to="/nearby" exact />
           <Route render={() => <h2>Page not found</h2>} />

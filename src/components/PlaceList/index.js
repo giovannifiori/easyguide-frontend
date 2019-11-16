@@ -1,17 +1,24 @@
 import React from 'react';
 import PlaceCard from '../PlaceCard';
 import { CircularProgress } from '@material-ui/core';
+import { withRouter } from 'react-router-dom';
 
 import { Container } from './styles';
 
-export default function PlaceList(props) {
+function PlaceList(props) {
   let placesContent;
   const { isLoading, places } = props;
+
+  function goToPlaceDetails(place) {
+    props.history.push(`/place/${place.id}`, {
+      place
+    });
+  }
 
   if (isLoading) {
     placesContent = <CircularProgress />;
   } else if (places && places.length === 0) {
-    placesContent = <h2>Nenhum local a ser exibido</h2>
+    placesContent = <h2>Nenhum local a ser exibido</h2>;
   } else {
     placesContent = places.map(place => (
       <PlaceCard
@@ -23,13 +30,13 @@ export default function PlaceList(props) {
             : null
         }
         positivePercentage={place.positiveOpinionsPercentage || ''}
+        key={place.id}
+        onClick={() => goToPlaceDetails(place)}
       />
     ));
   }
 
-  return (
-      <Container isLoading={isLoading} >
-          {placesContent}
-      </Container>
-  );
+  return <Container isLoading={isLoading}>{placesContent}</Container>;
 }
+
+export default withRouter(PlaceList);
