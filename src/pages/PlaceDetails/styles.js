@@ -36,5 +36,9 @@ export const ButtonContainer = styled.div`
   margin-top: 24px;
 `;
 
-export const CharacteristicsContainer = styled.div`
+export const CharacteristicsContainer = styled.div``;
+
+export const ReviewsContainer = styled.div`
+  max-height: 400px;
+  overflow-y: scroll;
 `;
