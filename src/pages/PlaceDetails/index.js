@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Dialog } from '@material-ui/core';
 
 import {
@@ -7,21 +7,40 @@ import {
   PlaceInfo,
   PlacePhoto,
   ButtonContainer,
-  CharacteristicsContainer
+  CharacteristicsContainer,
+  ReviewsContainer
 } from './styles';
 
 import PlaceReview from '../PlaceReview';
 import Characteristic from '../../components/Characteristic';
 import AccessibilityMessage from '../../components/AccessibilityMessage';
+import ReviewCard from '../../components/ReviewCard';
 
 import { BASE_API_URL } from '../../config/constants';
 import PlaceHolder from '../../assets/img/logo.png';
+
+import api from '../../services/api';
 
 export default function PlaceDetails(props) {
   const { place } = props.history.location.state;
   const [dialogState, setDialogState] = useState({
     open: false
   });
+  const [reviews, setReviews] = useState([]);
+  const [highlights, setHighlights] = useState([]);
+
+  const fetchPlaceDetails = id => {
+    if (!id) return;
+    api.get(`places/${id}`).then(details => {
+      let { reviews, highlights } = details.data;
+      setReviews(reviews);
+      setHighlights(highlights);
+    });
+  };
+
+  useEffect(() => {
+    fetchPlaceDetails(place.place_id);
+  }, []);
 
   const openReviewDialog = () => setDialogState({ ...dialogState, open: true });
 
@@ -89,6 +108,11 @@ export default function PlaceDetails(props) {
 
       <CharacteristicsContainer>
         <Characteristic
+          title="Destaques"
+          description="Esses são os pontos citados como destaque por outras pessoas que avaliaram esse local:"
+          items={highlights}
+        />
+        <Characteristic
           title="Endereço"
           description={place.formatted_address || place.vicinity}
         />
@@ -98,11 +122,16 @@ export default function PlaceDetails(props) {
         />
         <Characteristic
           title="Avaliação média geral"
-          description={place.rating}
+          description={place.rating || 'Sem informação'}
         />
         <Characteristic
           title={`Avaliações dos usuários (${place.totalAccessibilityReviews})`}
         />
+        <ReviewsContainer>
+          {reviews.map(review => (
+            <ReviewCard review={review} />
+          ))}
+        </ReviewsContainer>
       </CharacteristicsContainer>
 
       {renderReviewDialog()}
