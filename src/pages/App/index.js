@@ -16,6 +16,7 @@ import SignIn from '../SignIn';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
 import { ContentContainer } from './styles';
+import Profile from '../Profile';
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 const firebaseAppAuth = firebaseApp.auth();
@@ -55,6 +56,11 @@ function App(props) {
             render={() => (!!props.user ? <Search /> : <UnauthorizedPage />)}
           />
           <Route path="/signin" exact render={() => <SignIn {...props} />} />
+          <Route
+            path="/me"
+            exact
+            render={() => (!!props.user ? <Profile /> : <UnauthorizedPage />)}
+          />
           <Redirect from="/" to="/nearby" exact />
           <Route render={() => <h2>Page not found</h2>} />
         </Switch>
