@@ -18,17 +18,20 @@ import {
 import { Container, StepContainer } from './styles';
 
 import api from '../../services/api';
+import * as firebase from 'firebase/app';
 
 function getSteps() {
   return ['É acessível?', 'Destaques', 'Comentário'];
 }
 
 export default function PlaceReview(props) {
+  const currentUser = firebase.auth().currentUser || {};
+
   const [activeStep, setActiveStep] = useState(0);
   const [disabilities, setDisabilities] = useState([]);
   const [review, setReview] = useState({
     isAccessible: '',
-    userId: 'aaa111',
+    userId: currentUser.uid,
     text: '',
     highlights: []
   });
