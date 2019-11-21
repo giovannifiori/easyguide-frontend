@@ -28,7 +28,9 @@ export default withRouter(function Profile({ history }) {
       </Header>
       <Info>
         <Characteristic title="Email" description={user.email} />
-        <Button onClick={doSignout}>Sair da conta</Button>
+        <Button onClick={doSignout} variant="contained" color="secondary">
+          Sair da conta
+        </Button>
       </Info>
     </Container>
   );

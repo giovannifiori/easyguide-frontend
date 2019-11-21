@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Dialog } from '@material-ui/core';
+import { withRouter } from 'react-router-dom';
 
 import {
   Container,
@@ -21,7 +22,7 @@ import PlaceHolder from '../../assets/img/logo.png';
 
 import api from '../../services/api';
 
-export default function PlaceDetails(props) {
+export default withRouter(function PlaceDetails(props) {
   const { place } = props.history.location.state;
   const [dialogState, setDialogState] = useState({
     open: false
@@ -137,4 +138,4 @@ export default function PlaceDetails(props) {
       {renderReviewDialog()}
     </Container>
   );
-}
+});
