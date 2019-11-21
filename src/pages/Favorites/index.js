@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
+import * as firebase from 'firebase/app';
 
 import { Container } from './styles';
 
@@ -9,6 +10,8 @@ import InfoDialog from '../../components/InfoDialog';
 import api from '../../services/api';
 
 function Favorites() {
+  const currentUser = firebase.auth().currentUser || {};
+
   const [isLoading, setIsLoading] = useState(true);
   const [places, setPlaces] = useState([]);
   const [dialogState, setDialogState] = useState({
@@ -30,7 +33,7 @@ function Favorites() {
   };
 
   useEffect(() => {
-    requestFavoritePlaces('aaa111');
+    requestFavoritePlaces(currentUser.uid);
   }, []);
 
   let pageMessage = 'Buscando seus locais favoritos...';
