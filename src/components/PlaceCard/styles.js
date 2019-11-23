@@ -1,19 +1,14 @@
 import styled from 'styled-components';
+import { Card } from '@material-ui/core';
 
-export const Container = styled.div`
-  width: 350px;
-  margin: 16px 1px;
-`;
-
-export const Image = styled.img`
+export const Container = styled(Card)`
   width: 100%;
-  height: 240px;
-  object-fit: cover;
-`;
-
-export const Info = styled.div`
-  flex: 1;
-  padding: 2%;
+  min-height: 120px;
+  margin: 16px 1px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
 export const PlaceTitle = styled.h2`

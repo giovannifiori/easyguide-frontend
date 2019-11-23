@@ -3,7 +3,7 @@ import PlaceCard from '../PlaceCard';
 import { CircularProgress } from '@material-ui/core';
 import { withRouter } from 'react-router-dom';
 
-import { Container } from './styles';
+import { Container, List } from './styles';
 
 function PlaceList(props) {
   let placesContent;
@@ -39,7 +39,11 @@ function PlaceList(props) {
     );
   }
 
-  return <Container isLoading={isLoading}>{placesContent}</Container>;
+  return (
+    <Container isLoading={isLoading}>
+      <List>{placesContent}</List>
+    </Container>
+  );
 }
 
 export default withRouter(PlaceList);
