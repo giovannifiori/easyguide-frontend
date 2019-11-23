@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Dialog } from '@material-ui/core';
+import { Button, Dialog, Snackbar, IconButton } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import { withRouter } from 'react-router-dom';
 
 import {
@@ -22,21 +23,39 @@ import PlaceHolder from '../../assets/img/logo.png';
 
 import api from '../../services/api';
 
+import * as firebase from 'firebase/app';
+
 export default withRouter(function PlaceDetails(props) {
   const { place } = props.history.location.state;
   const [dialogState, setDialogState] = useState({
     open: false
   });
+  const [snackbarState, setSnackbarState] = useState({
+    open: false,
+    message: ''
+  });
+  const [isLoading, setIsLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
   const [highlights, setHighlights] = useState([]);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const currentUser = firebase.auth().currentUser;
 
   const fetchPlaceDetails = id => {
     if (!id) return;
-    api.get(`places/${id}`).then(details => {
-      let { reviews, highlights } = details.data;
-      setReviews(reviews);
-      setHighlights(highlights);
-    });
+    api
+      .get(`places/${id}`, {
+        params: {
+          userId: currentUser.uid
+        }
+      })
+      .then(details => {
+        let { reviews, highlights, isFavorite } = details.data;
+        setReviews(reviews);
+        setHighlights(highlights);
+        setIsFavorite(isFavorite);
+        setIsLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -48,9 +67,67 @@ export default withRouter(function PlaceDetails(props) {
   const closeReviewDialog = () =>
     setDialogState({ ...dialogState, open: false });
 
+  const handleSnackbarClose = () => {
+    setSnackbarState({
+      ...snackbarState,
+      open: false
+    });
+  };
+
   if (!place) {
     return null;
   }
+
+  const addPlaceToFavorites = (placeId, userId) => {
+    api
+      .post(`users/${userId}/favorites`, {
+        id: placeId
+      })
+      .then(() => {
+        setSnackbarState({
+          open: true,
+          message: `${place.name} foi adicionado aos seus favoritos!`
+        });
+      })
+      .catch(e => {
+        setIsFavorite(false);
+        setSnackbarState({
+          open: true,
+          message: `Falha ao adicionar ${place.name} aos seus favoritos!`
+        });
+      });
+  };
+
+  const removePlaceFromFavorites = (placeId, userId) => {
+    api
+      .delete(`users/${userId}/favorites`, {
+        data: {
+          id: placeId
+        }
+      })
+      .then(response => {
+        setSnackbarState({
+          open: true,
+          message: `${place.name} foi removido dos seus favoritos!`
+        });
+      })
+      .catch(e => {
+        setIsFavorite(true);
+        setSnackbarState({
+          open: true,
+          message: `Falha ao remover ${place.name} dos seus favoritos!`
+        });
+      });
+  };
+
+  const handlePlaceAsFavorite = () => {
+    setIsFavorite(!isFavorite);
+    if (isFavorite) {
+      removePlaceFromFavorites(place.place_id, currentUser.uid);
+    } else {
+      addPlaceToFavorites(place.place_id, currentUser.uid);
+    }
+  };
 
   const renderReviewDialog = () => {
     return (
@@ -61,6 +138,31 @@ export default withRouter(function PlaceDetails(props) {
       >
         <PlaceReview placeId={place.place_id} />
       </Dialog>
+    );
+  };
+
+  const renderSnackbar = () => {
+    return (
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+        open={snackbarState.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message={<span id="message-id">{snackbarState.message}</span>}
+        action={[
+          <IconButton
+            key="close"
+            aria-label="close"
+            color="inherit"
+            onClick={handleSnackbarClose}
+          >
+            <CloseIcon />
+          </IconButton>
+        ]}
+      />
     );
   };
 
@@ -92,14 +194,20 @@ export default withRouter(function PlaceDetails(props) {
             positiveOpinionsPercentage={place.positiveOpinionsPercentage}
           />
           <ButtonContainer>
-            <Button variant="contained" color="secondary">
-              Adicionar aos favoritos
+            <Button
+              variant="contained"
+              color="secondary"
+              disabled={isLoading}
+              onClick={handlePlaceAsFavorite}
+            >
+              {isFavorite ? 'Remover dos ' : 'Adicionar aos'} favoritos
             </Button>
             <Button
               style={{ marginTop: 16 }}
               variant="contained"
               color="primary"
               onClick={openReviewDialog}
+              disabled={isLoading}
             >
               Publicar avaliação
             </Button>
@@ -136,6 +244,7 @@ export default withRouter(function PlaceDetails(props) {
       </CharacteristicsContainer>
 
       {renderReviewDialog()}
+      {renderSnackbar()}
     </Container>
   );
 });
