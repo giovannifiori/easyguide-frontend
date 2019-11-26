@@ -11,6 +11,9 @@ import api from '../../services/api';
 export default function NearPlaces() {
   const [isLoading, setIsLoading] = useState(true);
   const [places, setPlaces] = useState([]);
+  const [pageMessage, setPageMessage] = useState(
+    'Buscando locais próximos a você...'
+  );
   const [dialogState, setDialogState] = useState({
     open: false,
     title: '',
@@ -26,6 +29,7 @@ export default function NearPlaces() {
       })
       .then(response => {
         setPlaces(response.data);
+        setPageMessage('Estes são os locais pertinhos de você');
         setIsLoading(false);
       })
       .catch(err => {
@@ -46,6 +50,10 @@ export default function NearPlaces() {
             text: 'Houve um erro ao tentar buscar a sua localização atual.',
             open: true
           });
+          setIsLoading(false);
+          setPageMessage(
+            'Não conseguimos obter sua localização. Por favor, verifique as permissões solicitadas por nós em seu navegador. Caso prefira, utilize o menu de busca para navegar pelos estabelecimentos :)'
+          );
         }
       );
     } else {
@@ -57,11 +65,6 @@ export default function NearPlaces() {
       });
     }
   }, []);
-
-  let pageMessage = 'Buscando locais próximos a você...';
-  if (!isLoading) {
-    pageMessage = 'Estes são os locais pertinhos de você';
-  }
 
   const closeInfoDialog = () => setDialogState({ ...dialogState, open: false });
 

@@ -20,6 +20,7 @@ export default function Search() {
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState('');
   const [places, setPlaces] = useState([]);
+  const [pageMessage, setPageMessage] = useState('');
   const [snackbarState, setSnackbarState] = useState({
     open: false,
     message: ''
@@ -41,21 +42,23 @@ export default function Search() {
         }
       })
       .then(response => {
-        setPlaces(response.data);
+        let placesResponse = response.data;
+        setPlaces(placesResponse);
+        if (placesResponse.length > 0) {
+          setPageMessage('Resultados da pesquisa:');
+        } else {
+          setPageMessage('Não encontramos nada para sua busca... :(');
+        }
         setIsLoading(false);
       })
       .catch(err => {
         setIsLoading(false);
+        setPageMessage(`Não conseguimos buscar locais parecidos com ${query}`);
       });
   };
 
-  let pageMessage = '';
-  if (places.length > 0) {
-    pageMessage = 'Resultados da pesquisa:';
-  }
-
   const handleInput = e => {
-    if(e.which === 13) {
+    if (e.which === 13) {
       searchPlaces();
       return;
     }
@@ -88,15 +91,15 @@ export default function Search() {
             onClick={handleSnackbarClose}
           >
             <CloseIcon />
-          </IconButton>,
+          </IconButton>
         ]}
       />
     );
-  }
+  };
 
   return (
     <Container>
-      <FormControl style={{marginBottom: 16}}>
+      <FormControl style={{ marginBottom: 16 }}>
         <InputLabel htmlFor="search-box">
           Digite aqui o nome do local que você está buscando...
         </InputLabel>
