@@ -17,8 +17,6 @@ function PlaceList(props) {
 
   if (isLoading) {
     placesContent = <CircularProgress />;
-  } else if (places && places.length === 0) {
-    placesContent = <h2>Nenhum local a ser exibido</h2>;
   } else {
     placesContent = places.map(place =>
       !place ? null : (

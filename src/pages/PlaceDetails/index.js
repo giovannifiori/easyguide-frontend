@@ -216,11 +216,13 @@ export default withRouter(function PlaceDetails(props) {
       </PlaceHeader>
 
       <CharacteristicsContainer>
-        <Characteristic
-          title="Destaques"
-          description="Esses são os pontos citados como destaque por outras pessoas que avaliaram esse local:"
-          items={highlights}
-        />
+        {highlights && highlights.length > 0 && (
+          <Characteristic
+            title="Destaques"
+            description="Esses são os pontos citados como destaque por outras pessoas que avaliaram esse local:"
+            items={highlights}
+          />
+        )}
         <Characteristic
           title="Endereço"
           description={place.formatted_address || place.vicinity}
