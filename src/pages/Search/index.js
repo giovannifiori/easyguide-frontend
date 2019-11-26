@@ -53,6 +53,7 @@ export default function Search() {
       })
       .catch(err => {
         setIsLoading(false);
+        setPlaces([]);
         setPageMessage(`Não conseguimos buscar locais parecidos com ${query}`);
       });
   };
