@@ -9,17 +9,18 @@ import {
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import CloseIcon from '@material-ui/icons/Close';
+import { connect } from 'react-redux';
 
 import { Container } from './styles';
 
 import PlaceList from '../../components/PlaceList';
 
 import api from '../../services/api';
+import * as actions from '../../store/actions';
 
-export default function Search() {
+function Search(props) {
   const [isLoading, setIsLoading] = useState(false);
   const [query, setQuery] = useState('');
-  const [places, setPlaces] = useState([]);
   const [pageMessage, setPageMessage] = useState('');
   const [snackbarState, setSnackbarState] = useState({
     open: false,
@@ -43,7 +44,7 @@ export default function Search() {
       })
       .then(response => {
         let placesResponse = response.data;
-        setPlaces(placesResponse);
+        props.setSearchResults(placesResponse);
         if (placesResponse.length > 0) {
           setPageMessage('Resultados da pesquisa:');
         } else {
@@ -53,7 +54,7 @@ export default function Search() {
       })
       .catch(err => {
         setIsLoading(false);
-        setPlaces([]);
+        props.setSearchResults([]);
         setPageMessage(`Não conseguimos buscar locais parecidos com ${query}`);
       });
   };
@@ -121,8 +122,22 @@ export default function Search() {
         />
       </FormControl>
       <h2>{pageMessage}</h2>
-      <PlaceList isLoading={isLoading} places={places} />
+      <PlaceList isLoading={isLoading} places={props.searchResults} />
       {renderSnackbar()}
     </Container>
   );
 }
+
+const mapStateToProps = state => {
+  return {
+    searchResults: state.places.search
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setSearchResults: places => dispatch(actions.setSearchResults(places))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Search);

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 
 import { Container } from './styles';
 
 import PlaceList from '../../components/PlaceList';
-
 import InfoDialog from '../../components/InfoDialog';
 
 import api from '../../services/api';
+import * as actions from '../../store/actions';
 
-export default function NearPlaces() {
+function NearPlaces(props) {
   const [isLoading, setIsLoading] = useState(true);
-  const [places, setPlaces] = useState([]);
   const [pageMessage, setPageMessage] = useState(
     'Buscando locais próximos a você...'
   );
@@ -21,6 +21,11 @@ export default function NearPlaces() {
   });
 
   const requestNearbyPlaces = (lat, lng) => {
+    if (props.nearbyPlaces && props.nearbyPlaces.length > 0) {
+      setPageMessage('Estes são os locais pertinhos de você');
+      setIsLoading(false);
+      return;
+    }
     api
       .get('places/nearby', {
         params: {
@@ -28,7 +33,7 @@ export default function NearPlaces() {
         }
       })
       .then(response => {
-        setPlaces(response.data);
+        props.setNearbyPlaces(response.data);
         setPageMessage('Estes são os locais pertinhos de você');
         setIsLoading(false);
       })
@@ -80,8 +85,22 @@ export default function NearPlaces() {
   return (
     <Container>
       <h2>{pageMessage}</h2>
-      <PlaceList isLoading={isLoading} places={places} />
+      <PlaceList isLoading={isLoading} places={props.nearbyPlaces} />
       {renderErrorDialog()}
     </Container>
   );
 }
+
+const mapStateToProps = state => {
+  return {
+    nearbyPlaces: state.places.nearby
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    setNearbyPlaces: places => dispatch(actions.setNearbyResults(places))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NearPlaces);
