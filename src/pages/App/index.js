@@ -17,6 +17,7 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
 import { ContentContainer } from './styles';
 import Profile from '../Profile';
+import { LinearProgress } from '@material-ui/core';
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 const firebaseAppAuth = firebaseApp.auth();
@@ -26,6 +27,17 @@ const providers = {
 };
 
 function App(props) {
+  function handlePageRender(props, pageToGo) {
+    let $Target = pageToGo;
+    if (props.user === undefined) {
+      return <LinearProgress style={{ width: '100%' }} color="secondary" />;
+    }
+    if (props.user === null) {
+      return <UnauthorizedPage />;
+    }
+    return <$Target />;
+  }
+
   return (
     <BrowserRouter>
       <GlobalStyle />
@@ -35,31 +47,27 @@ function App(props) {
           <Route
             path="/nearby"
             exact
-            render={() =>
-              !!props.user ? <NearPlaces /> : <UnauthorizedPage />
-            }
+            render={() => handlePageRender(props, NearPlaces)}
           />
           <Route
             path="/favorites"
             exact
-            render={() => (!!props.user ? <Favorites /> : <UnauthorizedPage />)}
+            render={() => handlePageRender(props, Favorites)}
           />
           <Route
             path="/place/:placeId"
-            render={() =>
-              !!props.user ? <PlaceDetails /> : <UnauthorizedPage />
-            }
+            render={() => handlePageRender(props, PlaceDetails)}
           />
           <Route
             path="/search"
             exact
-            render={() => (!!props.user ? <Search /> : <UnauthorizedPage />)}
+            render={() => handlePageRender(props, Search)}
           />
           <Route path="/signin" exact render={() => <SignIn {...props} />} />
           <Route
             path="/me"
             exact
-            render={() => (!!props.user ? <Profile /> : <UnauthorizedPage />)}
+            render={() => handlePageRender(props, Profile)}
           />
           <Redirect from="/" to="/nearby" exact />
           <Route render={() => <h2>Page not found</h2>} />
