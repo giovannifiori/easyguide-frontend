@@ -26,6 +26,8 @@ const providers = {
   emailProvider: new firebase.auth.EmailAuthProvider()
 };
 
+firebaseAppAuth.useDeviceLanguage();
+
 function App(props) {
   function handlePageRender(props, pageToGo) {
     let $Target = pageToGo;
