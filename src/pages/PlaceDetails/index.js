@@ -189,7 +189,6 @@ export default withRouter(function PlaceDetails(props) {
         <PlaceInfo>
           <h1>{place.name}</h1>
           <AccessibilityMessage
-            fontSize={16}
             totalReviews={place.totalAccessibilityReviews}
             positiveOpinionsPercentage={place.positiveOpinionsPercentage}
           />
