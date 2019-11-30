@@ -1,1 +1,1 @@
-export const BASE_API_URL = 'easyguide-backend.herokuapp.com';
+export const BASE_API_URL = 'http://easyguide-backend.herokuapp.com';
