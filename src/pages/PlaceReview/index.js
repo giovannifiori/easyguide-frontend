@@ -12,7 +12,8 @@ import {
   FormLabel,
   FormGroup,
   Checkbox,
-  TextField
+  TextField,
+  CircularProgress
 } from '@material-ui/core';
 
 import { Container, StepContainer } from './styles';
@@ -35,6 +36,7 @@ export default function PlaceReview(props) {
     text: '',
     highlights: []
   });
+  const [isSendingRequest, setIsSendingRequest] = useState(false);
   const steps = getSteps();
 
   const isLastStep = () => {
@@ -47,16 +49,23 @@ export default function PlaceReview(props) {
       .then(response => {
         setDisabilities(response.data);
       })
-      .catch(e => alert('error'));
+      .catch(e => {
+        alert('Falha ao buscar conteúdo para avaliar local. Tente novamente.');
+        if (props.onReviewFinished) {
+          props.onReviewFinished();
+        }
+      });
   }, []);
 
   const sendReview = () => {
+    setIsSendingRequest(true);
     api
       .post(`places/${props.placeId}/reviews`, review)
-      .then(response => {
-        alert('avaliado!');
-      })
-      .catch(e => alert('falha ao avaliar'));
+      .then(response => {})
+      .catch(e => alert('Falha ao publica avaliação. Tente novamente.'))
+      .finally(() => {
+        setIsSendingRequest(false);
+      });
   };
 
   const handleNext = () => {
@@ -204,7 +213,11 @@ export default function PlaceReview(props) {
       <div>
         {activeStep === steps.length ? (
           <div>
-            <Typography>Avaliação completada!</Typography>
+            {isSendingRequest ? (
+              <CircularProgress size={25} />
+            ) : (
+              <Typography>Avaliação completada!</Typography>
+            )}
             <Button onClick={props.onReviewFinished}>Fechar</Button>
           </div>
         ) : (
@@ -214,8 +227,13 @@ export default function PlaceReview(props) {
               <Button disabled={activeStep === 0} onClick={handleBack}>
                 Anterior
               </Button>
-              <Button variant="contained" color="primary" onClick={handleNext}>
-                {activeStep === steps.length - 1 ? 'Finalizar' : 'Próximo'}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                disabled={isLastStep() && isSendingRequest}
+              >
+                {isLastStep() ? 'Enviar avaliação' : 'Próximo'}
               </Button>
             </div>
           </div>
