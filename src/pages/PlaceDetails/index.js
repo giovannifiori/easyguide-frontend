@@ -136,7 +136,10 @@ export default withRouter(function PlaceDetails(props) {
         open={dialogState.open}
         onBackdropClick={closeReviewDialog}
       >
-        <PlaceReview placeId={place.place_id} />
+        <PlaceReview
+          placeId={place.place_id}
+          onReviewFinished={closeReviewDialog}
+        />
       </Dialog>
     );
   };
@@ -235,7 +238,8 @@ export default withRouter(function PlaceDetails(props) {
           description={place.rating || 'Sem informação'}
         />
         <Characteristic
-          title={`Avaliações dos usuários (${place.totalAccessibilityReviews})`}
+          title={`Avaliações dos usuários (${place.totalAccessibilityReviews ||
+            reviews.length})`}
         />
         <ReviewsContainer>
           {reviews.map(review => (
