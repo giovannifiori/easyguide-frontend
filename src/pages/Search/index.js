@@ -61,10 +61,15 @@ function Search(props) {
 
   const handleInput = e => {
     if (e.which === 13) {
-      searchPlaces();
       return;
     }
     setQuery(e.target.value);
+  };
+
+  const handleEnterKeyPress = e => {
+    if (e.which === 13) {
+      searchPlaces();
+    }
   };
 
   const handleSnackbarClose = () => {
@@ -110,7 +115,8 @@ function Search(props) {
           type="text"
           defaultValue={query}
           autoFocus
-          onKeyDown={handleInput}
+          onChange={handleInput}
+          onKeyDown={handleEnterKeyPress}
           style={{ width: '50%' }}
           endAdornment={
             <InputAdornment position="end">
