@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Dialog, Snackbar, IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import {
   Container,
@@ -22,10 +23,11 @@ import { BASE_API_URL } from '../../config/constants';
 import PlaceHolder from '../../assets/img/logo.png';
 
 import api from '../../services/api';
+import * as actions from '../../store/actions';
 
 import * as firebase from 'firebase/app';
 
-export default withRouter(function PlaceDetails(props) {
+function PlaceDetails(props) {
   const { place } = props.history.location.state;
   const [dialogState, setDialogState] = useState({
     open: false
@@ -88,6 +90,7 @@ export default withRouter(function PlaceDetails(props) {
           open: true,
           message: `${place.name} foi adicionado aos seus favoritos!`
         });
+        props.addPlaceToFavorites(place);
       })
       .catch(e => {
         setIsFavorite(false);
@@ -110,6 +113,7 @@ export default withRouter(function PlaceDetails(props) {
           open: true,
           message: `${place.name} foi removido dos seus favoritos!`
         });
+        props.removePlaceFromFavorites(place);
       })
       .catch(e => {
         setIsFavorite(true);
@@ -121,12 +125,12 @@ export default withRouter(function PlaceDetails(props) {
   };
 
   const handlePlaceAsFavorite = () => {
-    setIsFavorite(!isFavorite);
     if (isFavorite) {
       removePlaceFromFavorites(place.place_id, currentUser.uid);
     } else {
       addPlaceToFavorites(place.place_id, currentUser.uid);
     }
+    setIsFavorite(!isFavorite);
   };
 
   const renderReviewDialog = () => {
@@ -252,4 +256,14 @@ export default withRouter(function PlaceDetails(props) {
       {renderSnackbar()}
     </Container>
   );
-});
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    addPlaceToFavorites: place => dispatch(actions.addToFavorites(place)),
+    removePlaceFromFavorites: place =>
+      dispatch(actions.removeFromFavorites(place))
+  };
+};
+
+export default connect(null, mapDispatchToProps)(withRouter(PlaceDetails));

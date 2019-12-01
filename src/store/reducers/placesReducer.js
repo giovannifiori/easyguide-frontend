@@ -14,6 +14,18 @@ const placesReducer = (state = initalState, action) => {
         ...state,
         favorites: [...state.favorites, ...action.payload.places]
       };
+    case actionTypes.ADD_TO_FAVORITES:
+      return {
+        ...state,
+        favorites: [...state.favorites, action.payload.place]
+      };
+    case actionTypes.REMOVE_FROM_FAVORITES:
+      return {
+        ...state,
+        favorites: state.favorites.filter(
+          p => p.place_id !== action.payload.place.place_id
+        )
+      };
     case actionTypes.SET_FAVORITES_FETCHED:
       return {
         ...state,
